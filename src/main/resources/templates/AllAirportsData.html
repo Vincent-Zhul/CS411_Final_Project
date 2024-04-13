@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>All Airports</title>
+  <link rel="stylesheet" th:href="@{/css/allDataStyle.css}">
+</head>
+<body>
+<div class="container">
+  <h1>List of All Airports</h1>
+  <table class="data-table">
+    <thead>
+    <tr>
+      <th>AirportID</th>
+      <th>AirportName</th>
+      <th>City</th>
+      <th>Country</th>
+      <th>IATA</th>
+      <th>ICAO</th>
+      <th>TimeZone</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="airport : ${airports}">
+      <td th:text="${airport.airportID}"></td>
+      <td th:text="${airport.airportName}"></td>
+      <td th:text="${airport.city}"></td>
+      <td th:text="${airport.country}"></td>
+      <td th:text="${airport.IATA}"></td>
+      <td th:text="${airport.ICAO}"></td>
+      <td th:text="${airport.TimeZone}"></td>
+    </tr>
+    </tbody>
+  </table>
+</div>
+</body>
+</html>
