@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Greeting</title>
+    <link rel="stylesheet" th:href="@{/css/dataStoreStyle.css}">
+</head>
+<body>
+<div class="container">
+    <h1>Welcome!</h1>
+    <form id="detailsForm" th:action="@{/user/signing}" th:object="${user}" method="post">
+        <div class="input-group">
+            <label for="nameInput">User Name:</label>
+            <input id="nameInput" type="text" th:field="*{userName}" placeholder="Your User Name">
+        </div>
+        <div class="input-group">
+            <label for="passwordInput">Password:</label>
+            <input id="passwordInput" type="text" th:field="*{password}" placeholder="Your Password">
+        </div>
+        <div class="input-group">
+            <label for="emailInput">Email:</label>
+            <input id="emailInput" type="email" th:field="*{email}" placeholder="Your Email">
+        </div>
+        <div class="input-group">
+            <button type="submit">Submit</button>
+        </div>
+    </form>
+</div>
+</body>
+</html>
