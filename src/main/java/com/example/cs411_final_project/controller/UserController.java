@@ -44,12 +44,13 @@ public class UserController {
     }
 
     @PostMapping("/signing")
-    public String addUser(@ModelAttribute User user){
+    public String addUser(@ModelAttribute User user, Model model){
         User newUser = new User();
         newUser.setUserName(user.getUserName());
         newUser.setPassword(user.getPassword());
         newUser.setEmail(user.getEmail());
-        userRepository.save(newUser);
+        userRepository.save(user);
+        model.addAttribute("user", newUser);
         return "SignUpSuccessPage";
     }
 
