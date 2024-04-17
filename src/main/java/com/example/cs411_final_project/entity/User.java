@@ -1,17 +1,12 @@
 package com.example.cs411_final_project.entity;
 
-import javax.persistence.*;
-
-@Entity
-@Table(name = "User")
 public class User {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int userID;
     private String userName;
     private String password;
     private String email;
 
+    // 构造器
     public User() {
     }
 
@@ -22,6 +17,7 @@ public class User {
         this.email = email;
     }
 
+    // Getter 和 Setter 方法
     public int getUserID() {
         return userID;
     }
