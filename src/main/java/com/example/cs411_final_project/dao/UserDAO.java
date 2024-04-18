@@ -1,59 +1,67 @@
 package com.example.cs411_final_project.dao;
 
 import com.example.cs411_final_project.entity.User;
-import java.sql.*;
-import java.util.ArrayList;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
+import org.springframework.stereotype.Repository;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
+import java.sql.PreparedStatement;
 import java.util.List;
 
+@Repository
 public class UserDAO {
-    private String jdbcURL;
-    private String jdbcUsername;
-    private String jdbcPassword;
-    private Connection jdbcConnection;
+    private JdbcTemplate jdbcTemplate;
 
-    public UserDAO(String jdbcURL, String jdbcUsername, String jdbcPassword) {
-        this.jdbcURL = jdbcURL;
-        this.jdbcUsername = jdbcUsername;
-        this.jdbcPassword = jdbcPassword;
+    @Autowired
+    public UserDAO(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
     }
 
-    protected void connect() throws SQLException {
-        if (jdbcConnection == null || jdbcConnection.isClosed()) {
-            try {
-                Class.forName("com.mysql.jdbc.Driver");
-            } catch (ClassNotFoundException e) {
-                throw new SQLException(e);
-            }
-            jdbcConnection = DriverManager.getConnection(jdbcURL, jdbcUsername, jdbcPassword);
-        }
-    }
-
-    protected void disconnect() throws SQLException {
-        if (jdbcConnection != null && !jdbcConnection.isClosed()) {
-            jdbcConnection.close();
-        }
-    }
-
-    public List<User> listAllUsers() throws SQLException {
-        List<User> listUser = new ArrayList<>();
+    public List<User> listAllUsers() {
         String sql = "SELECT * FROM User";
-        connect();
-        Statement statement = jdbcConnection.createStatement();
-        ResultSet resultSet = statement.executeQuery(sql);
+        return jdbcTemplate.query(sql, (rs, rowNum) -> new User(
+                rs.getInt("userID"),
+                rs.getString("userName"),
+                rs.getString("password"),
+                rs.getString("email")
+        ));
+    }
 
-        while (resultSet.next()) {
-            int id = resultSet.getInt("userID");
-            String name = resultSet.getString("userName");
-            String password = resultSet.getString("password");
-            String email = resultSet.getString("email");
+    public int addUser(User user) {
+        final String sql = "INSERT INTO User (userName, password, email) VALUES (?, ?, ?)";
+        final String authoritySql = "INSERT INTO Authorities (username, authority) VALUES (?, ?)";
 
-            User user = new User(id, name, password, email);
-            listUser.add(user);
-        }
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+        jdbcTemplate.update(connection -> {
+            PreparedStatement ps = connection.prepareStatement(sql, new String[]{"userID"});
+            ps.setString(1, user.getUserName());
+            ps.setString(2, user.getPassword());  // Store the password in plain text
+            ps.setString(3, user.getEmail());
+            return ps;
+        }, keyHolder);
 
-        resultSet.close();
-        statement.close();
-        disconnect();
-        return listUser;
+        // Now insert into Authorities table using the same JdbcTemplate
+        jdbcTemplate.update(connection -> {
+            PreparedStatement ps = connection.prepareStatement(authoritySql);
+            ps.setString(1, user.getUserName());
+            ps.setString(2, "ROLE_USER");  // Set default authority to ROLE_USER
+            return ps;
+        });
+
+        return keyHolder.getKey().intValue(); // Return the ID of the newly created user
+    }
+
+    public User findUserByUsername(String username) {
+        String sql = "SELECT * FROM User WHERE userName = ?";
+        return jdbcTemplate.queryForObject(sql, new Object[]{username}, (rs, rowNum) -> new User(
+                rs.getInt("userID"),
+                rs.getString("userName"),
+                rs.getString("password"),
+                rs.getString("email")
+        ));
     }
 }

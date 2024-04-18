@@ -1,12 +1,6 @@
 package com.example.cs411_final_project.entity;
 
-import javax.persistence.*;
-
-@Entity
-@Table(name = "Airports")
 public class Airports {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     private int airportID;
     private String airportName;
     private String city;
