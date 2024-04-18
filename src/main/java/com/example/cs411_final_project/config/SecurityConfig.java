@@ -1,14 +1,22 @@
 package com.example.cs411_final_project.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
-import org.springframework.beans.factory.annotation.Autowired;
+import java.io.IOException;
 
 @Configuration
 @EnableWebSecurity
@@ -27,11 +35,27 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .formLogin()
                 .loginPage("/login")
+                .failureUrl("/login?error=true") // 登录失败后重定向到登录页面，并附带错误参数
                 .defaultSuccessUrl("/", true) // 登录成功后跳转到主界面
                 .permitAll()
                 .and()
                 .logout()
                 .permitAll();
+    }
+
+    @Bean
+    public SimpleUrlAuthenticationFailureHandler customFailureHandler() {
+        return new SimpleUrlAuthenticationFailureHandler() {
+            @Override
+            public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws ServletException, IOException {
+                String errorMessage = "SOMETHING WRONG WITH THE USERNAME OR PASSWORD, PLEASE RE-CHECK";
+                if (exception.getMessage().equalsIgnoreCase("User is disabled")) {
+                    errorMessage = "THIS USER DOES NOT HAVE ADMINISTRATOR RIGHTS, PLEASE CHECK THE USERNAME";
+                }
+                setDefaultFailureUrl("/login?error=" + errorMessage);
+                super.onAuthenticationFailure(request, response, exception);
+            }
+        };
     }
 
     @Override
@@ -48,5 +72,4 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return NoOpPasswordEncoder.getInstance();
     }
 }
-
 

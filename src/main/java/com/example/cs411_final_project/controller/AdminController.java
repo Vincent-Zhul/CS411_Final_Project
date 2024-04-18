@@ -27,26 +27,15 @@ public class AdminController {
         this.airportsDAO = airportsDAO;
     }
 
-//    @GetMapping("/login-as-admin")
-//    public String loginAsAdmin(HttpServletRequest request, HttpServletResponse response) {
-//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//        if (authentication != null && authentication.isAuthenticated()) {
-//            // 检查是否是管理员
-//            if (authentication.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN"))) {
-//                return "redirect:/admin-dashboard";  // 管理员跳转到管理界面
-//            } else {
-//                // 清除Cookie，需要重新登录
-//                Cookie cookie = new Cookie("auth_cookie", null);
-//                cookie.setMaxAge(0);
-//                cookie.setPath("/");
-//                response.addCookie(cookie);
-//
-//                request.getSession().setAttribute("loginMessage", "NOT ADMINISTER, PLEASE USE THE ADMINISTER'S ACCOUNT TO LOGIN");
-//                return "redirect:/admin-login";  // 重定向到管理员登录界面
-//            }
-//        }
-//        return "redirect:/login";  // 未登录或认证失败，重定向到普通登录页面
-//    }
+    @GetMapping("/adminlogin")
+    public String adminLogin() {
+        return "AdminLogin";
+    }
+
+    @GetMapping("/admindashboard")
+    public String adminDashboard() {
+        return "AdminDashboard";
+    }
 
     @GetMapping("/getallusers")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
