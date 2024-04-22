@@ -29,7 +29,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests()
-                .antMatchers("/", "/user/register").permitAll() // 允许所有用户访问主界面和注册页面
+                .antMatchers("/", "/register").permitAll() // 允许所有用户访问主界面和注册页面
                 .antMatchers("/admin/**").hasRole("ADMIN") // 只有ADMIN角色的用户才可以访问/admin/**路径
                 .anyRequest().authenticated() // 其他所有请求都需要认证
                 .and()
