@@ -1,6 +1,6 @@
 package com.example.cs411_final_project.entity;
 
-public class Route {
+public class Routes {
     private String flightNumber;
     private int AirlineId;
     private int departureAirportID;
@@ -8,10 +8,10 @@ public class Route {
     private int stops;
 
     // 构造器
-    public Route() {
+    public Routes() {
     }
 
-    public Route(String flightNumber, int AirlineId, int departureAirportID, int arrivalAirportID, int stops) {
+    public Routes(String flightNumber, int AirlineId, int departureAirportID, int arrivalAirportID, int stops) {
         this.flightNumber = flightNumber;
         this.AirlineId = AirlineId;
         this.arrivalAirportID = arrivalAirportID;
