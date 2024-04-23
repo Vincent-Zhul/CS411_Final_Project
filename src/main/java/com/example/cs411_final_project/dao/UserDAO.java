@@ -1,25 +1,50 @@
 package com.example.cs411_final_project.dao;
 
 import com.example.cs411_final_project.entity.User;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import org.slf4j.Logger;
 
 import java.sql.PreparedStatement;
-import java.util.List;
 
 @Repository
 public class UserDAO {
     private JdbcTemplate jdbcTemplate;
+    private static Logger logger = LoggerFactory.getLogger(UserDAO.class);
 
     @Autowired
     public UserDAO(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
+
+
+    public User authenticate(String username, String password) {
+        try {
+            String sql = "SELECT * FROM User WHERE userName = ? AND password = ?";
+            return jdbcTemplate.queryForObject(sql, new Object[]{username, password}, (rs, rowNum) -> new User(
+                    rs.getInt("userID"),
+                    rs.getString("userName"),
+                    rs.getString("password"),
+                    rs.getString("email")
+            ));
+        } catch (DataAccessException e) {
+            logger.error("Authentication failed for user: " + username, e);
+            return null; // 如果没有找到用户或查询失败，返回null
+        }
+    }
+
 
     public List<User> listAllUsers() {
         String sql = "SELECT * FROM User";
@@ -55,13 +80,68 @@ public class UserDAO {
         return keyHolder.getKey().intValue(); // Return the ID of the newly created user
     }
 
-    public User findUserByUsername(String username) {
-        String sql = "SELECT * FROM User WHERE userName = ?";
-        return jdbcTemplate.queryForObject(sql, new Object[]{username}, (rs, rowNum) -> new User(
-                rs.getInt("userID"),
-                rs.getString("userName"),
-                rs.getString("password"),
-                rs.getString("email")
-        ));
+    public int findUserIdByUsername(String username) {
+        String sql = "SELECT userID FROM User WHERE userName = ?";
+        return jdbcTemplate.queryForObject(sql, new Object[]{username}, Integer.class);
+    }
+
+    public List<Map<String, Object>> searchFlights(String departureCity, String arrivalCity, int maxStops) {
+        String sql = "SELECT " +
+                "r.flightNumber, " +
+                "a1.airportName AS DepartureAirport, " +
+                "a2.airportName AS ArrivalAirport, " +
+                "a1.city AS DepartureCity, " +
+                "a2.city AS ArrivalCity, " +
+                "a1.country AS DepartureCountry, " +
+                "a2.country AS ArrivalCountry " +
+                "FROM Routes r " +
+                "JOIN Airports a1 ON r.departureAirportID = a1.airportID " +
+                "JOIN Airports a2 ON r.arrivalAirportID = a2.airportID " +
+                "WHERE a1.city = ? AND a2.city = ? AND r.stops < ? " +
+                "ORDER BY r.flightNumber";
+
+        return jdbcTemplate.query(sql, new Object[]{departureCity, arrivalCity, maxStops}, new RowMapper<Map<String, Object>>() {
+            public Map<String, Object> mapRow(ResultSet rs, int rowNum) throws SQLException {
+                Map<String, Object> results = new HashMap<>();
+                results.put("FlightNumber", rs.getString("flightNumber"));
+                results.put("DepartureAirport", rs.getString("DepartureAirport"));
+                results.put("ArrivalAirport", rs.getString("ArrivalAirport"));
+                results.put("DepartureCity", rs.getString("DepartureCity"));
+                results.put("ArrivalCity", rs.getString("ArrivalCity"));
+                results.put("DepartureCountry", rs.getString("DepartureCountry"));
+                results.put("ArrivalCountry", rs.getString("ArrivalCountry"));
+                return results;
+            }
+        });
+    }
+
+
+    public void saveSubscriptions(int userId, List<String> flightNumbers) {
+        String sql = "INSERT INTO Subscription (flightNumber, userID) VALUES (?, ?)";
+        try {
+            for (String flightNumber : flightNumbers) {
+                // 验证flightNumber和userId是否有效
+                if (isValidFlightNumber(flightNumber) && isValidUserId(userId)) {
+                    jdbcTemplate.update(sql, flightNumber, userId);
+                } else {
+                    logger.error("Invalid flightNumber or userID: " + flightNumber + ", " + userId);
+                }
+            }
+        } catch (DataAccessException e) {
+            logger.error("Error inserting subscriptions for userID: " + userId + " with flightNumbers: " + flightNumbers, e);
+            throw e; // 可选择抛出异常，或者处理异常确保系统稳定性
+        }
+    }
+
+    private boolean isValidFlightNumber(String flightNumber) {
+        String sql = "SELECT COUNT(*) FROM Routes WHERE flightNumber = ?";
+        int count = jdbcTemplate.queryForObject(sql, new Object[]{flightNumber}, Integer.class);
+        return count > 0;
+    }
+
+    private boolean isValidUserId(int userId) {
+        String sql = "SELECT COUNT(*) FROM User WHERE userID = ?";
+        int count = jdbcTemplate.queryForObject(sql, new Object[]{userId}, Integer.class);
+        return count > 0;
     }
 }

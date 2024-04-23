@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>All Subscription</title>
+    <link rel="stylesheet" th:href="@{/css/allDataStyle.css}">
+</head>
+<body>
+<div class="container">
+    <h1>List of All Subscription</h1>
+    <table class="data-table">
+        <thead>
+        <tr>
+            <th>Flight Number</th>
+            <th>User ID</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="subscription : ${Subscription}">
+            <td th:text="${subscription.flightNumber}">Flight Number</td>
+            <td th:text="${subscription.userID}">User ID</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

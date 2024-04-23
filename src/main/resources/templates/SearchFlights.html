@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Search Flights</title>
+</head>
+<body>
+<div style="text-align: center;">
+    <h1>Flight Search</h1>
+    <form action="/user/search" method="post">
+        Departure City: <input type="text" name="departureCity" required><br>
+        Arrival City: <input type="text" name="arrivalCity" required><br>
+        Maximum Stops: <input type="number" name="maxStops" required><br>
+        <button type="submit">Apply</button>
+    </form>
+</div>
+<div style="margin-top: 30px;">
+    <form action="/user/subscribe" method="post">
+        <table border="1" align="center">
+            <tr>
+                <th>Select</th>
+                <th>Flight Number</th>
+                <th>Departure Airport</th>
+                <th>Arrival Airport</th>
+                <th>Departure City</th>
+                <th>Arrival City</th>
+                <th>Departure Country</th>
+                <th>Arrival Country</th>
+            </tr>
+            <tr th:each="flight : ${flights}">
+                <td><input type="checkbox" name="selectedFlights" th:value="${flight['FlightNumber']}"></td>
+                <td th:text="${flight['FlightNumber']}"></td>
+                <td th:text="${flight['DepartureAirport']}"></td>
+                <td th:text="${flight['ArrivalAirport']}"></td>
+                <td th:text="${flight['DepartureCity']}"></td>
+                <td th:text="${flight['ArrivalCity']}"></td>
+                <td th:text="${flight['DepartureCountry']}"></td>
+                <td th:text="${flight['ArrivalCountry']}"></td>
+            </tr>
+        </table>
+        <div style="text-align: center; margin-top: 20px;">
+            <button type="submit">Subscribe</button>
+        </div>
+    </form>
+</div>
+</body>
+</html>

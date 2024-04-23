@@ -1,9 +1,6 @@
 package com.example.cs411_final_project.controller;
 
-import com.example.cs411_final_project.dao.AirlinesDAO;
-import com.example.cs411_final_project.dao.AirportsDAO;
-import com.example.cs411_final_project.dao.PlanesDAO;
-import com.example.cs411_final_project.dao.UserDAO;
+import com.example.cs411_final_project.dao.*;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,13 +14,17 @@ public class AdminController {
     private final AirportsDAO airportsDAO;
     private final AirlinesDAO airlinesDAO;
     private final PlanesDAO planesDAO;
+    private final RoutesDAO routesDAO;
+    private final SubscriptionDAO subscriptionDAO;
 
 
-    public AdminController(UserDAO userDAO, AirportsDAO airportsDAO, AirlinesDAO airlinesDAO, PlanesDAO planesDAO) {
+    public AdminController(UserDAO userDAO, AirportsDAO airportsDAO, AirlinesDAO airlinesDAO, PlanesDAO planesDAO, RoutesDAO routesDAO, SubscriptionDAO subscriptionDAO) {
         this.userDAO = userDAO;
         this.airportsDAO = airportsDAO;
         this.airlinesDAO = airlinesDAO;
         this.planesDAO = planesDAO;
+        this.routesDAO = routesDAO;
+        this.subscriptionDAO = subscriptionDAO;
     }
 
     @GetMapping("/adminlogin")
@@ -55,5 +56,26 @@ public class AdminController {
     public String listAllAirlines(Model model){
         model.addAttribute("airlines", airlinesDAO.listAllAirlines());
         return "getallairlines";
+    }
+
+    @GetMapping("/getallplanes")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    public String listAllPlanes(Model model){
+        model.addAttribute("Planes", planesDAO.listAllPlanes());
+        return "getallplanes";
+    }
+
+    @GetMapping("/getallroutes")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    public String listAllRoutes(Model model){
+        model.addAttribute("Routes", routesDAO.listAllRoutes());
+        return "getallroutes";
+    }
+
+    @GetMapping("/getallsubscription")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    public String listAllSubscription(Model model){
+        model.addAttribute("Subscription", SubscriptionDAO.listAllSubscription());
+        return "getallsubscription";
     }
 }

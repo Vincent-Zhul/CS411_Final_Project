@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>My Subscriptions</title>
+</head>
+<body>
+<div class="container">
+    <h1>My Subscribed Flights</h1>
+    <table border="1" align="center">
+        <thead>
+        <tr>
+            <th>Flight Number</th>
+            <th>Departure Airport</th>
+            <th>Arrival Airport</th>
+            <th>Departure City</th>
+            <th>Arrival City</th>
+            <th>Departure Country</th>
+            <th>Arrival Country</th>
+            <th>Stops</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="flight : ${flightDetails}">
+            <td th:text="${flight['flightNumber']}"></td>
+            <td th:text="${flight['departureAirport']}"></td>
+            <td th:text="${flight['arrivalAirport']}"></td>
+            <td th:text="${flight['departureCity']}"></td>
+            <td th:text="${flight['arrivalCity']}"></td>
+            <td th:text="${flight['departureCountry']}"></td>
+            <td th:text="${flight['arrivalCountry']}"></td>
+            <td th:text="${flight['stops']}"></td>
+        </tr>
+        </tbody>
+    </table>
+    <div style="margin-top: 20px; text-align: center;">
+        <a href="/user/search">Back to Search</a>
+    </div>
+</div>
+</body>
+</html>

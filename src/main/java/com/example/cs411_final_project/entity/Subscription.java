@@ -1,8 +1,8 @@
 package com.example.cs411_final_project.entity;
 
 public class Subscription{
-    private int userID; // PK
-    private String flightNumber; // PK
+    private int userID; // FK
+    private String flightNumber; // FK
 
     public Subscription(){
     }

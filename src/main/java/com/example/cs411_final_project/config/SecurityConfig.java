@@ -1,5 +1,6 @@
 package com.example.cs411_final_project.config;
 
+import com.example.cs411_final_project.dao.UserDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,6 +12,9 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -28,6 +32,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
+                .csrf().disable() // 禁用CSRF
                 .authorizeRequests()
                 .antMatchers("/", "/register").permitAll() // 允许所有用户访问主界面和注册页面
                 .antMatchers("/admin/**").hasRole("ADMIN") // 只有ADMIN角色的用户才可以访问/admin/**路径
@@ -65,6 +70,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .usersByUsernameQuery("select username, password, 'true' as enabled from User where username=?")
                 .authoritiesByUsernameQuery("select username, authority from Authorities where username=?");
     }
+    
+    public int getCurrentUserId() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.getPrincipal() instanceof UserDetails) {
+            String username = ((UserDetails) authentication.getPrincipal()).getUsername();
+            UserDAO userDAO = null;
+            return userDAO.findUserIdByUsername(username);
+        }
+        return -1;  // 用户未登录或无法获取用户信息
+    }
 
     @SuppressWarnings("deprecation")
     public PasswordEncoder passwordEncoder() {
@@ -72,4 +87,3 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return NoOpPasswordEncoder.getInstance();
     }
 }
-
