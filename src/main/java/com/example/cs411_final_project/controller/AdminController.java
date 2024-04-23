@@ -27,55 +27,50 @@ public class AdminController {
         this.subscriptionDAO = subscriptionDAO;
     }
 
-    @GetMapping("/adminlogin")
-    public String adminLogin() {
-        return "AdminLogin";
-    }
-
-    @GetMapping("/admindashboard")
+    @GetMapping("/dashboard")
     public String adminDashboard() {
-        return "AdminDashboard";
+        return "AdminPages/AdminDashboard";
     }
 
     @GetMapping("/getallusers")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public String listAllUsers(Model model){
         model.addAttribute("users", userDAO.listAllUsers());
-        return "getallusers";
+        return "AdminPages/getallusers";
     }
 
     @GetMapping("/getallairports")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public String listAllAirports(Model model){
         model.addAttribute("airports", airportsDAO.listAllAirports());
-        return "getallairports";
+        return "AdminPages/getallairports";
     }
 
     @GetMapping("/getallairlines")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public String listAllAirlines(Model model){
         model.addAttribute("airlines", airlinesDAO.listAllAirlines());
-        return "getallairlines";
+        return "AdminPages/getallairlines";
     }
 
     @GetMapping("/getallplanes")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public String listAllPlanes(Model model){
-        model.addAttribute("Planes", planesDAO.listAllPlanes());
-        return "getallplanes";
+        model.addAttribute("planes", planesDAO.listAllPlanes());
+        return "AdminPages/getallplanes";
     }
 
     @GetMapping("/getallroutes")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public String listAllRoutes(Model model){
-        model.addAttribute("Routes", routesDAO.listAllRoutes());
-        return "getallroutes";
+        model.addAttribute("routes", routesDAO.listAllRoutes());
+        return "AdminPages/getallroutes";
     }
 
     @GetMapping("/getallsubscription")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public String listAllSubscription(Model model){
         model.addAttribute("Subscription", SubscriptionDAO.listAllSubscription());
-        return "getallsubscription";
+        return "AdminPages/getallsubscription";
     }
 }

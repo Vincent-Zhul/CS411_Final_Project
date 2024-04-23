@@ -60,7 +60,7 @@
 <body>
 <div class="container">
     <h1>Register</h1>
-    <form id="detailsForm" th:action="@{/user/register}" th:object="${user}" method="post">
+    <form id="detailsForm" th:action="@{/register}" th:object="${user}" method="post">
         <div class="input-group">
             <label for="nameInput">User Name:</label>
             <input id="nameInput" type="text" th:field="*{userName}" placeholder="Your User Name" required>
@@ -78,5 +78,8 @@
         </div>
     </form>
 </div>
+<script>
+    // Optional: JavaScript for additional client-side validation or interaction
+</script>
 </body>
 </html>

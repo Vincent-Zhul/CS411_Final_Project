@@ -10,7 +10,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -23,9 +22,14 @@ public class UserController {
     @Autowired
     private SubscriptionDAO subscriptionDAO;
 
+    @GetMapping("/dashboard")
+    public String userDashboard() {
+        return "UserPages/UserDashboard"; // 返回用户仪表板视图
+    }
+
     @GetMapping("/search")
     public String showSearchForm(Model model) {
-        return "SearchFlights";
+        return "UserPages/SearchFlights";
     }
 
     @PostMapping("/search")
@@ -36,7 +40,7 @@ public class UserController {
             Model model) {
         List<Map<String, Object>> flights = userDAO.searchFlights(departureCity, arrivalCity, maxStops);
         model.addAttribute("flights", flights);
-        return "SearchFlights";
+        return "UserPages/SearchFlights";
     }
 
     @PostMapping("/subscribe")
@@ -58,7 +62,7 @@ public class UserController {
         // 调用UserDAO来保存订阅
         userDAO.saveSubscriptions(userId, selectedFlights);
 
-        return "SubscribeSuccess";  // 重定向回搜索页面或确认页面
+        return "UserPages/SubscribeSuccess";  // 重定向回搜索页面或确认页面
     }
 
     @GetMapping("/subscription")
@@ -85,6 +89,6 @@ public class UserController {
 
         model.addAttribute("flightDetails", flightDetailsList);  // Add detailed flight information to model
 
-        return "UserSubscription";  // Return the name of the Thymeleaf template
+        return "UserPages/UserSubscription";  // Return the name of the Thymeleaf template
     }
 }

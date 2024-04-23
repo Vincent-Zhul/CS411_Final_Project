@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>All Routes</title>
+    <link rel="stylesheet" th:href="@{/css/allDataStyle.css}">
+</head>
+<body>
+<div class="container">
+    <h1>List of All Routes</h1>
+    <table class="data-table">
+        <thead>
+        <tr>
+            <th>Flight Number</th>
+            <th>Airline ID</th>
+            <th>Departure Airport ID</th>
+            <th>Arrival Airport ID</th>
+            <th>Stops</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="route : ${routes}">
+            <td th:text="${route.flightNumber}">Flight Number</td>
+            <td th:text="${route.airlineId}">Airline ID</td>
+            <td th:text="${route.departureAirportID}">Departure Airport ID</td>
+            <td th:text="${route.arrivalAirportID}">Arrival Airport ID</td>
+            <td th:text="${route.stops}">Stops</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

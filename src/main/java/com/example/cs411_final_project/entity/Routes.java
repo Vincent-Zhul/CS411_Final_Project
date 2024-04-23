@@ -20,12 +20,12 @@ public class Routes {
 
     }
 
-    // Getter 和 Setter 方法
-    public String getflightNumber() {
+    // getter and setter
+    public String getFlightNumber() {
         return flightNumber;
     }
 
-    public void setflightNumber(String flightNumber) {
+    public void setFlightNumber(String flightNumber) {
         this.flightNumber = flightNumber;
     }
 
@@ -37,27 +37,27 @@ public class Routes {
         this.AirlineId = AirlineId;
     }
 
-    public int getdepartureAirportID() {
+    public int getDepartureAirportID() {
         return departureAirportID;
     }
 
-    public void setdepartureAirportID(int departureAirportID) {
+    public void setDepartureAirportID(int departureAirportID) {
         this.departureAirportID = departureAirportID;
     }
 
-    public int getarrivalAirportID() {
+    public int getArrivalAirportID() {
         return arrivalAirportID;
     }
 
-    public void setarrivalAirportID(int arrivalAirportID) {
+    public void setArrivalAirportID(int arrivalAirportID) {
         this.arrivalAirportID = arrivalAirportID;
     }
 
-    public int getstops() {
+    public int getStops() {
         return stops;
     }
 
-    public void setstops(int stops) {
+    public void setStops(int stops) {
         this.stops = stops;
     }
 

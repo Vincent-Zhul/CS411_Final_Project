@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>All Planes</title>
+    <link rel="stylesheet" th:href="@{/css/allDataStyle.css}">
+</head>
+<body>
+<div class="container">
+    <h1>List of All Planes</h1>
+    <table class="data-table">
+        <thead>
+        <tr>
+            <th>planeName</th>
+            <th>IATA</th>
+            <th>ICAO</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="plane : ${planes}">
+            <td th:text="${plane.planeName}">Plane Name</td>
+            <td th:text="${plane.IATA}">IATA</td>
+            <td th:text="${plane.ICAO}">ICAO</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>
