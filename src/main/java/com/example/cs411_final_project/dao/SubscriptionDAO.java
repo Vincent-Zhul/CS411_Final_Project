@@ -45,34 +45,22 @@ public class SubscriptionDAO {
     }
 
     public List<Map<String, Object>> getFlightDetailsByFlightNumber(String flightNumber) {
-        String sql = "SELECT " +
-                "r.flightNumber, " +
-                "a1.airportName AS DepartureAirport, " +
-                "a2.airportName AS ArrivalAirport, " +
-                "a1.city AS DepartureCity, " +
-                "a2.city AS ArrivalCity, " +
-                "a1.country AS DepartureCountry, " +
-                "a2.country AS ArrivalCountry, " +
-                "r.stops " +
-                "FROM Routes r " +
-                "JOIN Airports a1 ON r.departureAirportID = a1.airportID " +
-                "JOIN Airports a2 ON r.arrivalAirportID = a2.airportID " +
-                "WHERE r.flightNumber = ?";
-
-        return jdbcTemplate.query(sql, new Object[]{flightNumber}, new RowMapper<Map<String, Object>>() {
-            public Map<String, Object> mapRow(ResultSet rs, int rowNum) throws SQLException {
-                Map<String, Object> results = new HashMap<>();
-                results.put("FlightNumber", rs.getString("flightNumber"));
-                results.put("DepartureAirport", rs.getString("DepartureAirport"));
-                results.put("ArrivalAirport", rs.getString("ArrivalAirport"));
-                results.put("DepartureCity", rs.getString("DepartureCity"));
-                results.put("ArrivalCity", rs.getString("ArrivalCity"));
-                results.put("DepartureCountry", rs.getString("DepartureCountry"));
-                results.put("ArrivalCountry", rs.getString("ArrivalCountry"));
-                results.put("Stops", rs.getInt("stops"));
-                return results;
-            }
-        });
+        return jdbcTemplate.query("{CALL GetFlightDetailsByFlightNumber(?)}",
+                new Object[]{flightNumber},
+                new RowMapper<Map<String, Object>>() {
+                    public Map<String, Object> mapRow(ResultSet rs, int rowNum) throws SQLException {
+                        Map<String, Object> results = new HashMap<>();
+                        results.put("FlightNumber", rs.getString("flightNumber"));
+                        results.put("DepartureAirport", rs.getString("DepartureAirport"));
+                        results.put("ArrivalAirport", rs.getString("ArrivalAirport"));
+                        results.put("DepartureCity", rs.getString("DepartureCity"));
+                        results.put("ArrivalCity", rs.getString("ArrivalCity"));
+                        results.put("DepartureCountry", rs.getString("DepartureCountry"));
+                        results.put("ArrivalCountry", rs.getString("ArrivalCountry"));
+                        results.put("Stops", rs.getInt("stops"));
+                        return results;
+                    }
+                });
     }
 
 }

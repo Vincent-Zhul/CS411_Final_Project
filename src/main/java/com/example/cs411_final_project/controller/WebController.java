@@ -47,10 +47,16 @@ public class WebController {
 
     @PostMapping("/register")
     public String registerUser(@ModelAttribute User user, Model model) {
-        int userId = userDAO.addUser(user); // Add user and get the new user's ID
-        model.addAttribute("userId", userId); // Pass User ID to the model
-        model.addAttribute("userName", user.getUserName()); // Pass User Name to the model
-        return "RegisterSuccess"; // 返回注册成功页面
+        try {
+            int userId = userDAO.addUser(user); // 尝试添加用户并获取新用户的 ID
+            model.addAttribute("userId", userId); // 将用户 ID 传递到模型
+            model.addAttribute("userName", user.getUserName()); // 将用户名传递到模型
+            return "RegisterSuccess"; // 返回注册成功页面
+        } catch (RuntimeException e) {
+            model.addAttribute("user", user); // 重新绑定用户信息，以便能再次填写表单
+            model.addAttribute("usernameError", "User Name EXISTS, use this to login or change your user name");
+            return "Register"; // 由于异常，返回注册页面
+        }
     }
 
     @PostMapping("/login")

@@ -53,7 +53,8 @@
 <body>
 <div class="login-container">
     <h2>Login</h2>
-    <form th:action="@{/login}" method="post"> <!-- Login form -->
+    <p th:if="${error}" class="alert alert-danger" th:text="${error}"></p>
+    <form th:action="@{/login}" method="post">
         <div class="mb-4">
             <label for="username" class="form-label">Username</label>
             <input type="text" class="form-control" id="username" name="username" required autofocus>

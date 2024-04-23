@@ -64,6 +64,7 @@
         <div class="input-group">
             <label for="nameInput">User Name:</label>
             <input id="nameInput" type="text" th:field="*{userName}" placeholder="Your User Name" required>
+            <span th:if="${usernameError}" th:text="${usernameError}" style="color:red;"></span>
         </div>
         <div class="input-group">
             <label for="passwordInput">Password:</label>
@@ -78,8 +79,5 @@
         </div>
     </form>
 </div>
-<script>
-    // Optional: JavaScript for additional client-side validation or interaction
-</script>
 </body>
 </html>

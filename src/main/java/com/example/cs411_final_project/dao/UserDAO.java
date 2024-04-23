@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 import org.slf4j.Logger;
 
+import javax.transaction.Transactional;
 import java.sql.PreparedStatement;
 
 @Repository
@@ -56,28 +57,34 @@ public class UserDAO {
         ));
     }
 
+    @Transactional
     public int addUser(User user) {
         final String sql = "INSERT INTO User (userName, password, email) VALUES (?, ?, ?)";
         final String authoritySql = "INSERT INTO Authorities (username, authority) VALUES (?, ?)";
 
         KeyHolder keyHolder = new GeneratedKeyHolder();
-        jdbcTemplate.update(connection -> {
-            PreparedStatement ps = connection.prepareStatement(sql, new String[]{"userID"});
-            ps.setString(1, user.getUserName());
-            ps.setString(2, user.getPassword());  // Store the password in plain text
-            ps.setString(3, user.getEmail());
-            return ps;
-        }, keyHolder);
+        try {
+            jdbcTemplate.update(connection -> {
+                PreparedStatement ps = connection.prepareStatement(sql, new String[]{"userID"});
+                ps.setString(1, user.getUserName());
+                ps.setString(2, user.getPassword());  // Store the password in plain text
+                ps.setString(3, user.getEmail());
+                return ps;
+            }, keyHolder);
 
-        // Now insert into Authorities table using the same JdbcTemplate
-        jdbcTemplate.update(connection -> {
-            PreparedStatement ps = connection.prepareStatement(authoritySql);
-            ps.setString(1, user.getUserName());
-            ps.setString(2, "ROLE_USER");  // Set default authority to ROLE_USER
-            return ps;
-        });
+            // Now insert into Authorities table using the same JdbcTemplate
+            jdbcTemplate.update(connection -> {
+                PreparedStatement ps = connection.prepareStatement(authoritySql);
+                ps.setString(1, user.getUserName());
+                ps.setString(2, "ROLE_USER");  // Set default authority to ROLE_USER
+                return ps;
+            });
 
-        return keyHolder.getKey().intValue(); // Return the ID of the newly created user
+            return keyHolder.getKey().intValue();  // Return the ID of the newly created user
+        } catch (DataAccessException e) {
+            // Handle the exception thrown by the trigger
+            throw new RuntimeException("Insert failed, possibly due to duplicate username: " + e.getMessage());
+        }
     }
 
     public int findUserIdByUsername(String username) {
@@ -86,33 +93,21 @@ public class UserDAO {
     }
 
     public List<Map<String, Object>> searchFlights(String departureCity, String arrivalCity, int maxStops) {
-        String sql = "SELECT " +
-                "r.flightNumber, " +
-                "a1.airportName AS DepartureAirport, " +
-                "a2.airportName AS ArrivalAirport, " +
-                "a1.city AS DepartureCity, " +
-                "a2.city AS ArrivalCity, " +
-                "a1.country AS DepartureCountry, " +
-                "a2.country AS ArrivalCountry " +
-                "FROM Routes r " +
-                "JOIN Airports a1 ON r.departureAirportID = a1.airportID " +
-                "JOIN Airports a2 ON r.arrivalAirportID = a2.airportID " +
-                "WHERE a1.city = ? AND a2.city = ? AND r.stops < ? " +
-                "ORDER BY r.flightNumber";
-
-        return jdbcTemplate.query(sql, new Object[]{departureCity, arrivalCity, maxStops}, new RowMapper<Map<String, Object>>() {
-            public Map<String, Object> mapRow(ResultSet rs, int rowNum) throws SQLException {
-                Map<String, Object> results = new HashMap<>();
-                results.put("FlightNumber", rs.getString("flightNumber"));
-                results.put("DepartureAirport", rs.getString("DepartureAirport"));
-                results.put("ArrivalAirport", rs.getString("ArrivalAirport"));
-                results.put("DepartureCity", rs.getString("DepartureCity"));
-                results.put("ArrivalCity", rs.getString("ArrivalCity"));
-                results.put("DepartureCountry", rs.getString("DepartureCountry"));
-                results.put("ArrivalCountry", rs.getString("ArrivalCountry"));
-                return results;
-            }
-        });
+        return jdbcTemplate.query("{CALL SearchFlights(?, ?, ?)}",
+                new Object[]{departureCity, arrivalCity, maxStops},
+                new RowMapper<Map<String, Object>>() {
+                    public Map<String, Object> mapRow(ResultSet rs, int rowNum) throws SQLException {
+                        Map<String, Object> results = new HashMap<>();
+                        results.put("FlightNumber", rs.getString("flightNumber"));
+                        results.put("DepartureAirport", rs.getString("DepartureAirport"));
+                        results.put("ArrivalAirport", rs.getString("ArrivalAirport"));
+                        results.put("DepartureCity", rs.getString("DepartureCity"));
+                        results.put("ArrivalCity", rs.getString("ArrivalCity"));
+                        results.put("DepartureCountry", rs.getString("DepartureCountry"));
+                        results.put("ArrivalCountry", rs.getString("ArrivalCountry"));
+                        return results;
+                    }
+                });
     }
 
 
