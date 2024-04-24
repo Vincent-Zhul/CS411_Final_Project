@@ -45,7 +45,7 @@
         button {
             width: 100%;
             padding: 10px;
-            background-color: #5c67f2;
+            background-color: #000000;
             border: none;
             border-radius: 5px;
             color: white;
@@ -53,7 +53,17 @@
             cursor: pointer;
         }
         button:hover {
-            background-color: #5058e2;
+            background-color: #69696b;
+        }
+        .link-button {
+            background-color: #f4f4f4;
+            color: #333;
+            text-align: center;
+            margin-top: 10px;
+        }
+        .link-button:hover {
+            background-color: #69696b;
+            color: #000;
         }
     </style>
 </head>
@@ -78,6 +88,9 @@
             <button type="submit">Submit</button>
         </div>
     </form>
+    <div class="input-group">
+        <button type="button" class="link-button" onclick="window.location.href='/login'">Sign In</button>
+    </div>
 </div>
 </body>
 </html>
