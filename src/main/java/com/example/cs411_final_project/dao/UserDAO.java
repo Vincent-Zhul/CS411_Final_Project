@@ -110,6 +110,23 @@ public class UserDAO {
                 });
     }
 
+    public List<Map<String, Object>> getPopularFlights(int limit) {
+        return jdbcTemplate.query("{CALL GetPopularFlightRoutes(?)}",
+                new Object[]{limit},
+                new RowMapper<Map<String, Object>>() {
+                    @Override
+                    public Map<String, Object> mapRow(ResultSet rs, int rowNum) throws SQLException {
+                        Map<String, Object> results = new HashMap<>();
+                        results.put("FlightNumber", rs.getString("flightNumber"));
+                        results.put("SubscriberCount", rs.getInt("SubscriberCount"));
+                        results.put("DepartureAirport", rs.getString("DepartureAirport"));
+                        results.put("ArrivalAirport", rs.getString("ArrivalAirport"));
+                        return results;
+                    }
+                });
+    }
+
+
 
     public void saveSubscriptions(int userId, List<String> flightNumbers) {
         String sql = "INSERT INTO Subscription (flightNumber, userID) VALUES (?, ?)";

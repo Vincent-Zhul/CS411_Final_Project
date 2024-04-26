@@ -43,6 +43,20 @@ public class UserController {
         return "UserPages/SearchFlights";
     }
 
+    @GetMapping("/popular")
+    public String showPopularFlights(Model model) {
+        return "UserPages/PopularFlights";
+    }
+
+    @PostMapping("/popular")
+    public String searchFlight(
+            @RequestParam(name = "limitNumber", required = false, defaultValue = "10") int limit,
+            Model model) {
+        List<Map<String, Object>> flights = userDAO.getPopularFlights(limit);
+        model.addAttribute("flights", flights);
+        return "UserPages/PopularFlights";
+    }
+
     @PostMapping("/subscribe")
     public String subscribeFlights(
             @RequestParam("selectedFlights") List<String> selectedFlights,
