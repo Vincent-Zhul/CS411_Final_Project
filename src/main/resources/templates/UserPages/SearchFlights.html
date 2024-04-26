@@ -64,11 +64,13 @@
             <table class="table custom-table">
                 <thead>
                 <tr>
-                    <th>Select</th>
                     <th>Flight Number</th>
-                    <th>Subscriber Count</th>
                     <th>Departure Airport</th>
                     <th>Arrival Airport</th>
+                    <th>Departure City</th>
+                    <th>Arrival City</th>
+                    <th>Departure Country</th>
+                    <th>Arrival Country</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -76,9 +78,12 @@
                 <tr th:each="flight : ${flights}">
                     <td><input type="checkbox" name="selectedFlights" th:value="${flight['FlightNumber']}"></td>
                     <td th:text="${flight['FlightNumber']}"></td>
-                    <td th:text="${flight['SubscriberCount']}"></td>
                     <td th:text="${flight['DepartureAirport']}"></td>
                     <td th:text="${flight['ArrivalAirport']}"></td>
+                    <td th:text="${flight['DepartureCity']}"></td>
+                    <td th:text="${flight['ArrivalCity']}"></td>
+                    <td th:text="${flight['DepartureCountry']}"></td>
+                    <td th:text="${flight['ArrivalCountry']}"></td>
                 </tr>
                 </tbody>
             </table>
