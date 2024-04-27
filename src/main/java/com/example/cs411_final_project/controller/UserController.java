@@ -9,6 +9,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -104,5 +105,47 @@ public class UserController {
         model.addAttribute("flightDetails", flightDetailsList);  // Add detailed flight information to model
 
         return "UserPages/UserSubscription";  // Return the name of the Thymeleaf template
+    }
+
+    @PostMapping("/deleteSubscription")
+    public String deleteSubscription(
+            @RequestParam("flightNumber") String flightNumber,
+            RedirectAttributes redirectAttributes) {
+        // Get current user's ID
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String username;
+        if (principal instanceof UserDetails) {
+            username = ((UserDetails) principal).getUsername();
+        } else {
+            username = principal.toString();
+        }
+
+        int userId = userDAO.findUserIdByUsername(username);
+
+        // Delete the subscription
+        subscriptionDAO.deleteSubscription(userId, flightNumber);
+
+        // Redirect with a success message
+        redirectAttributes.addFlashAttribute("message", "Subscription deleted successfully.");
+
+        return "redirect:/user/subscription";  // Redirect to the subscription view
+    }
+    // Method for user self-deletion
+    @PostMapping("/deleteAccount")
+    @Transactional
+    public String deleteAccount(RedirectAttributes redirectAttributes) {
+        // Get the current authenticated user
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String username = (principal instanceof UserDetails) ?
+                ((UserDetails) principal).getUsername() : principal.toString();
+
+        // Delete in the order: Authorities -> Subscription -> User
+        userDAO.deleteAuthorities(username);
+        int userId = userDAO.findUserIdByUsername(username);
+        userDAO.deleteSubscriptions(userId);
+        userDAO.deleteUser(username);
+
+        redirectAttributes.addFlashAttribute("message", "Account deleted successfully.");
+        return "redirect:/logout";
     }
 }

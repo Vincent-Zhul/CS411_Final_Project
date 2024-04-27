@@ -156,4 +156,21 @@ public class UserDAO {
         int count = jdbcTemplate.queryForObject(sql, new Object[]{userId}, Integer.class);
         return count > 0;
     }
+
+    // Method to delete from Authorities table
+    public void deleteAuthorities(String username) {
+        String sql = "DELETE FROM Authorities WHERE username = ?";
+        jdbcTemplate.update(sql, username);
+    }
+    // Method to delete from Subscription table
+    public void deleteSubscriptions(int userId) {
+        String sql = "DELETE FROM Subscription WHERE userID = ?";
+        jdbcTemplate.update(sql, userId);
+    }
+
+    // Method to delete from User table
+    public void deleteUser(String username) {
+        String sql = "DELETE FROM User WHERE userName = ?";
+        jdbcTemplate.update(sql, username);
+    }
 }

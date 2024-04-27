@@ -56,6 +56,12 @@
             <td th:text="${flight['DepartureCountry']}"></td>
             <td th:text="${flight['ArrivalCountry']}"></td>
             <td th:text="${flight['Stops']}"></td>
+            <td>
+                <form th:action="@{/user/deleteSubscription}" method="post">
+                    <input type="hidden" name="flightNumber" th:value="${flight['FlightNumber']}">
+                    <button type="submit" class="btn btn-black" >Delete</button>
+                </form>
+            </td>
         </tr>
         </tbody>
     </table>

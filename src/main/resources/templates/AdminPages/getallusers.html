@@ -23,6 +23,13 @@
             <td th:text="${user.userName}">UserName</td>
             <td th:text="${user.password}">Password</td>
             <td th:text="${user.email}">Email</td>
+            <td>
+                <!-- Delete User Form with Confirmation -->
+                <form action="/admin/deleteUser" method="post" onsubmit="return confirm('Are you sure you want to delete this user?');">
+                    <input type="hidden" name="username" th:value="${user.userName}">
+                    <button type="submit" class="btn-danger">Delete</button>
+                </form>
+            </td>
         </tr>
         </tbody>
     </table>

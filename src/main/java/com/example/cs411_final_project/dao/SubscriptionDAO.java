@@ -63,4 +63,9 @@ public class SubscriptionDAO {
                 });
     }
 
+    public void deleteSubscription(int userID, String flightNumber) {
+        String sql = "DELETE FROM Subscription WHERE userID = ? AND flightNumber = ?";
+        jdbcTemplate.update(sql, userID, flightNumber);
+    }
+
 }
