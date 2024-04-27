@@ -28,7 +28,7 @@
             color: #333;
             margin-bottom: 20px;
         }
-        .btn-primary {
+        .btn-primary, .btn-danger {
             display: inline-block;
             padding: 10px 20px;
             margin-top: 20px;
@@ -42,6 +42,18 @@
         }
         .btn-primary:hover {
             background-color: darkgray;
+        }
+        .btn-danger {
+            background-color: red;
+            margin-left: 20px; /* Adds space between the log out and delete buttons */
+        }
+        .btn-danger:hover {
+            background-color: darkred;
+        }
+        .button-group {
+            display: flex;
+            justify-content: center; /* Aligns buttons centrally below the other content */
+            margin-top: 20px; /* Additional top margin for better spacing */
         }
     </style>
 </head>
