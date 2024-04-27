@@ -9,7 +9,7 @@
         body {
             padding-top: 20px;
             color: black;
-            background-color: #f5f5f5;
+            background-color: #e6e6e6;
         }
         .custom-table {
             background-color: #e9ecef;
@@ -24,11 +24,14 @@
             border-bottom: 1px solid black;
         }
         .custom-button {
-            background-color: black;
+            background-color: #555555;
             color: white;
         }
         .custom-button:hover {
             background-color: darkgray;
+        }
+        h1 {
+            text-align: center;
         }
     </style>
 </head>
@@ -41,15 +44,15 @@
             <div class="row align-items-center">
                 <div class="col-md-4">
                     <label for="departureCity" class="form-label">Departure City:</label>
-                    <input type="text" id="departureCity" name="departureCity" class="form-control" required>
+                    <input type="text" id="departureCity" name="departureCity" placeholder="Enter here" class="form-control" required>
                 </div>
                 <div class="col-md-4">
                     <label for="arrivalCity" class="form-label">Arrival City:</label>
-                    <input type="text" id="arrivalCity" name="arrivalCity" class="form-control" required>
+                    <input type="text" id="arrivalCity" name="arrivalCity" placeholder="Enter here" class="form-control" required>
                 </div>
                 <div class="col-md-4">
                     <label for="maxStops" class="form-label">Maximum Stops:</label>
-                    <input type="number" id="maxStops" name="maxStops" class="form-control" required>
+                    <input type="number" id="maxStops" name="maxStops" placeholder="Enter here" class="form-control" required>
                 </div>
             </div>
             <div class="text-center mt-3">
