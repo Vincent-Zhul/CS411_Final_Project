@@ -26,36 +26,32 @@ public class WebController {
 
     @GetMapping("/")
     public String mainPage() {
-        return "main"; // 返回主页面
+        return "main"; // main page
     }
 
     @GetMapping("/login")
     public String loginPage() {
-        return "login"; // 返回登录页面
+        return "login"; // login page
     }
 
-//    @GetMapping("/logout")
-//    public String logoutPage() {
-//        return "main"; // 返回登出页面
-//    }
 
     @GetMapping("/register")
     public String showRegisterPage(Model model) {
-        model.addAttribute("user", new User());  // 添加一个空的User对象供表单绑定
-        return "Register";  // 返回注册视图页面
+        model.addAttribute("user", new User());  // Add an empty User object for form binding
+        return "Register";  // Return to the registration page
     }
 
     @PostMapping("/register")
     public String registerUser(@ModelAttribute User user, Model model) {
         try {
-            int userId = userDAO.addUser(user); // 尝试添加用户并获取新用户的 ID
-            model.addAttribute("userId", userId); // 将用户 ID 传递到模型
-            model.addAttribute("userName", user.getUserName()); // 将用户名传递到模型
-            return "RegisterSuccess"; // 返回注册成功页面
+            int userId = userDAO.addUser(user); // Add users and obtain new user ID
+            model.addAttribute("userId", userId); // deliver the user ID to the model
+            model.addAttribute("userName", user.getUserName()); // deliver the user name to the model
+            return "RegisterSuccess"; // Return to the registration success page
         } catch (RuntimeException e) {
-            model.addAttribute("user", user); // 重新绑定用户信息，以便能再次填写表单
+            model.addAttribute("user", user); // error, return the user object to the model
             model.addAttribute("usernameError", "User Name EXISTS, use this to login or change your user name");
-            return "Register"; // 由于异常，返回注册页面
+            return "Register"; // Return to the registration page
         }
     }
 
@@ -64,23 +60,22 @@ public class WebController {
             @RequestParam("username") String username,
             @RequestParam("password") String password,
             Authentication authentication) {
-        // 验证逻辑在Spring Security配置中处理
         if (authentication == null || !authentication.isAuthenticated()) {
             ModelAndView errorModel = new ModelAndView("login");
             errorModel.addObject("error", "CHECK YOUR USERNAME OR PASSWORD");
-            return errorModel; // 验证失败，返回错误信息
+            return errorModel; // Verification failed, return to the login page
         }
 
         Set<String> roles = AuthorityUtils.authorityListToSet(authentication.getAuthorities());
         if (roles.contains("ROLE_USER")) {
-            return new ModelAndView("redirect:/user/dashboard"); // 重定向到 UserController 的用户仪表板方法
+            return new ModelAndView("redirect:/user/dashboard"); // Redirect to the user dashboard
         } else if (roles.contains("ROLE_ADMIN")) {
-            return new ModelAndView("redirect:/admin/dashboard"); // 重定向到 AdminController 的管理员仪表板方法
+            return new ModelAndView("redirect:/admin/dashboard"); // Redirect to the admin dashboard
         }
 
         ModelAndView errorModel = new ModelAndView("login");
         errorModel.addObject("error", "Invalid role");
-        return errorModel; // 角色不正确时返回错误
+        return errorModel; // Return error when the authority is incorrect
     }
 
     @GetMapping("/checkLoginAndRedirect")
@@ -89,12 +84,12 @@ public class WebController {
         if (authentication != null && authentication.isAuthenticated() && !(authentication instanceof AnonymousAuthenticationToken)) {
             Set<String> roles = AuthorityUtils.authorityListToSet(authentication.getAuthorities());
             if (roles.contains("ROLE_ADMIN")) {
-                return new ModelAndView("redirect:/admin/dashboard"); // 管理员身份，重定向到管理员仪表板
+                return new ModelAndView("redirect:/admin/dashboard"); // admin authority
             } else if (roles.contains("ROLE_USER")) {
-                return new ModelAndView("redirect:/user/dashboard"); // 用户身份，重定向到用户仪表板
+                return new ModelAndView("redirect:/user/dashboard"); // user authority
             }
         }
-        // 用户未登录或无有效身份，重定向到登录页面
+        // User not logged in or with no valid identity, redirected to login page
         return new ModelAndView("redirect:/login");
     }
 }

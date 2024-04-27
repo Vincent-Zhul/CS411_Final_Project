@@ -24,7 +24,7 @@ public class UserController {
 
     @GetMapping("/dashboard")
     public String userDashboard() {
-        return "UserPages/UserDashboard"; // 返回用户仪表板视图
+        return "UserPages/UserDashboard"; // Return to user dashboard
     }
 
     @GetMapping("/search")
@@ -61,7 +61,7 @@ public class UserController {
     public String subscribeFlights(
             @RequestParam("selectedFlights") List<String> selectedFlights,
             RedirectAttributes redirectAttributes) {
-        // 获取当前认证的用户的用户名
+        // Obtain the username of the currently authenticated user
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String username;
         if (principal instanceof UserDetails) {
@@ -70,13 +70,13 @@ public class UserController {
             username = principal.toString();
         }
 
-        // 从数据库获取用户ID
+        // Get User ID
         int userId = userDAO.findUserIdByUsername(username);
 
-        // 调用UserDAO来保存订阅
+        // Save subscriptions
         userDAO.saveSubscriptions(userId, selectedFlights);
 
-        return "UserPages/SubscribeSuccess";  // 重定向回搜索页面或确认页面
+        return "UserPages/SubscribeSuccess";  // Redirect back to the search page or confirmation page
     }
 
     @GetMapping("/subscription")

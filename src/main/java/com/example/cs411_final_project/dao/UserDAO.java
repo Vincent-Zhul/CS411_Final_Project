@@ -42,7 +42,7 @@ public class UserDAO {
             ));
         } catch (DataAccessException e) {
             logger.error("Authentication failed for user: " + username, e);
-            return null; // 如果没有找到用户或查询失败，返回null
+            return null; // If the user is not found or the query fails, return null
         }
     }
 

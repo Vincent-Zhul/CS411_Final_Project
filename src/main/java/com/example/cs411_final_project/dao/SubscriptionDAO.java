@@ -35,7 +35,7 @@ public class SubscriptionDAO {
             return jdbcTemplate.query(sql, new Object[]{userID}, (rs, rowNum) -> rs.getString("flightNumber"));
         } catch (Exception e) {
             e.printStackTrace();
-            return new ArrayList<>(); // 或根据实际情况处理异常
+            return new ArrayList<>();
         }
     }
 
