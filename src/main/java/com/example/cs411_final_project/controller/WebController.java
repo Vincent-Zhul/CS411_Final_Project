@@ -3,7 +3,6 @@ package com.example.cs411_final_project.controller;
 import com.example.cs411_final_project.dao.UserDAO;
 import com.example.cs411_final_project.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataAccessException;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -38,7 +37,7 @@ public class WebController {
     @GetMapping("/register")
     public String showRegisterPage(Model model) {
         model.addAttribute("user", new User());  // Add an empty User object for form binding
-        return "Register";  // Return to the registration page
+        return "Register/Register";  // Return to the registration page
     }
 
     @PostMapping("/register")
@@ -47,11 +46,11 @@ public class WebController {
             int userId = userDAO.addUser(user); // Add users and obtain new user ID
             model.addAttribute("userId", userId); // deliver the user ID to the model
             model.addAttribute("userName", user.getUserName()); // deliver the user name to the model
-            return "RegisterSuccess"; // Return to the registration success page
+            return "Register/RegisterSuccess"; // Return to the registration success page
         } catch (RuntimeException e) {
             model.addAttribute("user", user); // error, return the user object to the model
             model.addAttribute("usernameError", "User Name EXISTS, use this to login or change your user name");
-            return "Register"; // Return to the registration page
+            return "Register/Register"; // Return to the registration page
         }
     }
 
