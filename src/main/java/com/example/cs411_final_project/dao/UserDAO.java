@@ -60,30 +60,32 @@ public class UserDAO {
     @Transactional
     public int addUser(User user) {
         final String sql = "INSERT INTO User (userName, password, email) VALUES (?, ?, ?)";
-        final String authoritySql = "INSERT INTO Authorities (username, authority) VALUES (?, ?)";
+        final String authoritySql = "INSERT INTO Authority (userID, userName, role) VALUES (?, ?, ?)";
 
         KeyHolder keyHolder = new GeneratedKeyHolder();
         try {
             jdbcTemplate.update(connection -> {
                 PreparedStatement ps = connection.prepareStatement(sql, new String[]{"userID"});
                 ps.setString(1, user.getUserName());
-                ps.setString(2, user.getPassword());  // Store the password in plain text
+                ps.setString(2, user.getPassword());
                 ps.setString(3, user.getEmail());
                 return ps;
             }, keyHolder);
 
+            int userId = keyHolder.getKey().intValue();
             // Now insert into Authorities table using the same JdbcTemplate
             jdbcTemplate.update(connection -> {
                 PreparedStatement ps = connection.prepareStatement(authoritySql);
-                ps.setString(1, user.getUserName());
-                ps.setString(2, "ROLE_USER");  // Set default authority to ROLE_USER
+                ps.setInt(1, userId);
+                ps.setString(2, user.getUserName());
+                ps.setString(3, "user");
                 return ps;
             });
 
-            return keyHolder.getKey().intValue();  // Return the ID of the newly created user
+            return userId;
         } catch (DataAccessException e) {
-            // Handle the exception thrown by the trigger
-            throw new RuntimeException("Insert failed, possibly due to duplicate username: " + e.getMessage());
+            logger.error("Database operation failed: ", e);
+            throw new RuntimeException("Insert failed due to: " + e.getMessage());
         }
     }
 
@@ -159,7 +161,7 @@ public class UserDAO {
 
     // Method to delete from Authorities table
     public void deleteAuthorities(String username) {
-        String sql = "DELETE FROM Authorities WHERE username = ?";
+        String sql = "DELETE FROM Authority WHERE username = ?";
         jdbcTemplate.update(sql, username);
     }
     // Method to delete from Subscription table

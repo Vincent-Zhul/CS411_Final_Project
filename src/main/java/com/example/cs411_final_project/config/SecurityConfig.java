@@ -85,9 +85,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         auth.jdbcAuthentication().dataSource(dataSource)
                 .passwordEncoder(passwordEncoder())  // Support plaintext password verification
                 .usersByUsernameQuery("select username, password, 'true' as enabled from User where username=?")
-                .authoritiesByUsernameQuery("select username, authority from Authorities where username=?");
+                .authoritiesByUsernameQuery("select username, role from Authority where username=?");
     }
-    
+
     public int getCurrentUserId() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.getPrincipal() instanceof UserDetails) {
